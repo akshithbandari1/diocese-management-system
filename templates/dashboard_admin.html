@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="text-dark">Admin Dashboard: <span class="text-primary">{{ current_user.username }}</span></h2>
+            <span class="badge bg-info text-dark">System Administrator</span>
+        </div>
+        <p class="text-muted">Manage user requests, monitor system activity, and maintain documents.</p>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-warning fw-bold">Pending Account Requests (PCDC-27)</div>
+            <div class="card-body">
+                <table class="table small mb-0">
+                    {% for p in pending %}
+                    <tr>
+                        <td class="align-middle">{{ p.username }}</td>
+                        <td class="text-end">
+                            <a href="/admin_action/approve/{{p.id}}" class="btn btn-success btn-sm">Approve</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td class="text-center text-muted">No pending requests.</td></tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-dark text-white fw-bold">System Activity Log</div>
+            <div class="card-body overflow-auto" style="height: 200px;">
+                <ul class="list-group list-group-flush small">
+                    {% for log in logs %}
+                    <li class="list-group-item">
+                        <strong>{{ log.username }}</strong>: {{ log.action }} 
+                        <br><small class="text-muted">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted">No activity recorded yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center bg-white">
+                <h5 class="mb-0">User Directory</h5>
+                <form class="d-flex" action="/dashboard" method="GET">
+                    <input name="search" class="form-control form-control-sm me-2" placeholder="Search by name/ID">
+                    <button class="btn btn-primary btn-sm">Search</button>
+                </form>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th class="text-end pe-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td>{{ u.id }}</td>
+                            <td>{{ u.username }}</td>
+                            <td>
+                                <span class="badge {% if u.role=='admin' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
+                                    {{ u.role }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if u.status=='active' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                    {{ u.status }}
+                                </span>
+                            </td>
+                            <td class="text-end pe-3">
+                                <div class="btn-group">
+                                    {% if u.username != 'admin' and u.id != current_user.id %}
+                                        {% if u.role == 'basic' %}
+                                        <a href="/admin_action/promote/{{u.id}}" class="btn btn-outline-primary btn-sm">Make Admin</a>
+                                        {% endif %}
+                                        
+                                        <a href="/admin_action/delete/{{u.id}}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this account?')">Delete</a>
+                                    {% else %}
+                                        <span class="text-muted small">System Protected</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="mt-4 mb-5">
+             <a href="{{ url_for('documents') }}" class="btn btn-secondary">Go to Document Management</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

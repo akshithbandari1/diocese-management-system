@@ -1,0 +1,17 @@
+first open cmd and change to cd /d D:\GRE\project_root
+then run--> python app.py
+
+http://127.0.0.1:5000/dashboard
+
+http://127.0.0.1:5000/login
+
+creds
+ admin/admin123
+ Akshith/akshith123
+ user/user@123
+--------------------------------------------------------
+
+- updating the app in a way that the admin has to promote a basic user to admin so that he gets all the admin privileges
+- 
+
+

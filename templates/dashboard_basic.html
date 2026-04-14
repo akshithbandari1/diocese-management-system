@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow p-5 text-center bg-white">
+            <h1 class="display-4 text-primary fw-bold">Welcome, {{ current_user.username }}!</h1>
+            <p class="lead text-muted">You have successfully accessed the Diocese Portal.</p>
+            
+            <div class="my-4">
+                <span class="badge bg-success px-3 py-2">Account Status: Active</span>
+            </div>
+            
+            <hr class="my-4">
+            
+            <p class="mb-4">Use the options below to manage your documents or update your account security settings.</p>
+            
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ url_for('documents') }}" class="btn btn-info btn-lg px-4 shadow-sm">
+                    <i class="bi bi-file-earmark-text"></i> View Documents
+                </a>
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-primary btn-lg px-4 shadow-sm">
+                    <i class="bi bi-person-gear"></i> Update My Profile
+                </a>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <p class="small text-muted">
+                Need assistance? Please contact your system administrator at 
+                <a href="mailto:admin@diocese.org" class="text-decoration-none">admin@diocese.org</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
