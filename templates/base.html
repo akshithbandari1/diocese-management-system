@@ -3,62 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diocese Management System</title>
+    <title>Diocese of St. Augustine - PCDC</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        body { background-color: #f8f9fa; }
-        .navbar { margin-bottom: 30px; }
-        .card { border: none; border-radius: 10px; }
-        .shadow-sm { box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important; }
+        :root { --sidebar-bg: #32261d; --active-gold: #c5a059; --bg-light: #f9f7f4; }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; min-height: 100vh; margin: 0; }
+        
+        /* Sidebar Styles */
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); color: #fff; padding: 20px 0; flex-shrink: 0; position: fixed; height: 100vh; }
+        .sidebar-brand { padding: 0 25px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        .sidebar-brand h5 { color: var(--active-gold); margin: 0; font-weight: bold; }
+        .nav-link { color: #b0aba6; padding: 12px 25px; transition: 0.3s; border-radius: 0; font-size: 15px; }
+        .nav-link:hover, .nav-link.active { background-color: rgba(255,255,255,0.05); color: var(--active-gold); border-left: 4px solid var(--active-gold); }
+        .nav-link i { margin-right: 15px; }
+
+        /* Main Content */
+        .main-content { margin-left: 280px; flex-grow: 1; padding: 40px; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .stat-card { padding: 30px; border: 1px solid #eee; }
+        .stat-number { font-size: 32px; font-weight: bold; margin: 10px 0; }
+        .stat-label { color: #888; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ url_for('dashboard') }}">Diocese Portal</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    {% if current_user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link text-white me-2" href="{{ url_for('dashboard') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white me-2" href="{{ url_for('documents') }}">Documents</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white me-3" href="{{ url_for('profile') }}">My Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-sm px-3">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+    {% if current_user.is_authenticated %}
+    <div class="sidebar shadow">
+        <div class="sidebar-brand">
+            <h5>Diocese of St. Augustine</h5>
+            <small class="text-uppercase" style="font-size: 10px; opacity: 0.6;">Parish Data Center</small>
         </div>
-    </nav>
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="{{ url_for('dashboard') }}"><i class="bi bi-house-door"></i> Dashboard</a>
+            <a class="nav-link" href="{{ url_for('profile') }}"><i class="bi bi-person"></i> My Profile</a>
+            <a class="nav-link" href="{{ url_for('dashboard') }}"><i class="bi bi-people"></i> User Management</a>
+            <a class="nav-link" href="{{ url_for('documents') }}"><i class="bi bi-file-earmark-lock"></i> Documents</a>
+            <a class="nav-link" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </nav>
+    </div>
+    {% endif %}
 
-    <div class="container">
+    <div class="main-content" style="{% if not current_user.is_authenticated %}margin-left: 0; width: 100%;{% endif %}">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <div class="alert alert-info alert-dismissible fade show shadow-sm mb-4">{{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
-
+        
         {% block content %}{% endblock %}
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

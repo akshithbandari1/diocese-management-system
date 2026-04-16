@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'diocese-secure-key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///diocese_final.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///diocese_final.db')
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 
 db = SQLAlchemy(app)

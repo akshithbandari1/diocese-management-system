@@ -1,21 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header">Update My Profile</div>
-            <div class="card-body">
+<div class="mb-5">
+    <h2 class="fw-bold">My Profile</h2>
+    <p class="text-muted">Manage your personal information and account security.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body p-5">
                 <form method="POST">
-                    <div class="mb-3">
-                        <label>Email Address</label>
-                        <input type="email" name="email" class="form-control" value="{{ current_user.email }}" required>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <label class="form-label small text-muted fw-bold">USERNAME</label>
+                            <input type="text" class="form-control bg-light border-0" value="{{ current_user.username }}" readonly>
+                        </div>
+                        <div class="col">
+                            <label class="form-label small text-muted fw-bold">ACCOUNT ROLE</label>
+                            <input type="text" class="form-control bg-light border-0" value="{{ current_user.role|upper }}" readonly>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label>New Password (leave blank to keep current)</label>
-                        <input type="password" name="password" class="form-control">
+                    
+                    <div class="mb-4">
+                        <label class="form-label small text-muted fw-bold">EMAIL ADDRESS</label>
+                        <input type="email" name="email" class="form-control border-0 bg-light" value="{{ current_user.email }}" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+
+                    <div class="mb-4">
+                        <label class="form-label small text-muted fw-bold">NEW PASSWORD (OPTIONAL)</label>
+                        <input type="password" name="password" class="form-control border-0 bg-light" placeholder="Leave blank to keep current">
+                    </div>
+
+                    <button type="submit" class="btn btn-dark px-5" style="background-color: #32261d;">Save Changes</button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="card bg-dark text-white p-4 h-100 shadow-sm" style="background-color: #32261d !important;">
+            <h5 class="fw-bold text-warning mb-3">Account Information</h5>
+            <p class="small opacity-75">Your profile is registered with the Diocese of St. Augustine Parish Data Center. Updates to your account are tracked in the system activity logs.</p>
+            <hr class="opacity-25">
+            <div class="d-flex justify-content-between small">
+                <span>Member Since:</span>
+                <span class="text-warning">April 2024</span>
             </div>
         </div>
     </div>

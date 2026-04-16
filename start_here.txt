@@ -5,6 +5,8 @@ http://127.0.0.1:5000/dashboard
 
 http://127.0.0.1:5000/login
 
+Neon string: postgresql://neondb_owner:npg_O1KVWDqXPI3H@ep-young-tooth-amsl4zo1.c-5.us-east-1.aws.neon.tech/neondb?sslmode=req
+
 creds
  admin/admin123
  Akshith/akshith123
