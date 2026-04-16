@@ -10,8 +10,26 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'diocese-secure-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///diocese_final.db')
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 db = SQLAlchemy(app)
+# --- Auto-Initialize Cloud Database ---
+with app.app_context():
+    db.create_all()
+    # Create the initial admin if it doesn't exist
+    admin_exists = User.query.filter_by(username='admin').first()
+    if not admin_exists:
+        admin_user = User(
+            username='admin', 
+            email='admin@diocese.org', 
+            password=generate_password_hash('admin123'), 
+            role='admin', 
+            status='active'
+        )
+        db.session.add(admin_user)
+        db.session.commit()
+        
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
