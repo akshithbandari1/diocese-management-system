@@ -164,21 +164,17 @@ def admin_action(action, user_id):
     db.session.commit()
     return redirect(url_for('dashboard'))
 
-@app.route('/documents', methods=['GET', 'POST'])
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
-def documents():
-    if request.method == 'POST' and 'file' in request.files:
-        f = request.files['file']
-        if f.filename != '':
-            filename = secure_filename(f.filename)
-            f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.session.add(Document(filename=filename, uploaded_by=current_user.username))
-            db.session.commit()
-            log_event(f"Uploaded file: {filename}")
-            flash(f"File {filename} uploaded successfully.")
-    
-    docs = Document.query.all()
-    return render_template('documents.html', docs=docs)
+def profile():
+    if request.method == 'POST':
+        current_user.email = request.form['email']
+        if request.form['password']:
+            current_user.password = generate_password_hash(request.form['password'])
+        db.session.commit()
+        log_event("Updated Profile")
+        flash("Profile updated successfully.")
+    return render_template('profile.html')
 
 @app.route('/logout')
 @login_required

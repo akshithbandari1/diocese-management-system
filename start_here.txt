@@ -4,16 +4,50 @@ then run--> python app.py
 http://127.0.0.1:5000/dashboard
 
 http://127.0.0.1:5000/login
+------------------------------------------------------------
+pushing the changes to git:
+1. git add app.py
+If you changed multiple files, like the HTML file too, you can just use git add .
+2. git commit -m "fix: resolve 500 error and database connection timeout"
+3.git push origin main
 
+-------------------------------------------------------------
+https://diocese-management-system.onrender.com
+-------------------------------------------------------------
 Neon string: postgresql://neondb_owner:npg_O1KVWDqXPI3H@ep-young-tooth-amsl4zo1.c-5.us-east-1.aws.neon.tech/neondb?sslmode=req
 
 creds
  admin/admin123
  Akshith/akshith123
  user/user@123
+
+Sign in to Render and Neon via GitHub
+
+GitHub:
+---
+akshithbandari1
+Akshith@123
+
+Cron-Job creds:
+-----
+akshithbandari1@gmail.com/Akshith@123
+
+Uptime-Robot logged in with GitHub as cron-job is not of any help
 --------------------------------------------------------
 
 - updating the app in a way that the admin has to promote a basic user to admin so that he gets all the admin privileges
-- 
+- I'm using render services for running the webpage live online and using cron job for waking the services up for every 14 mins as the render services falls asleep for every 15 mins of inactivity.
 
+ 
+----------------------------------------------------------------
+the Python backend, the Neon database, and the UptimeRobot heartbeat—finally working together in harmony.
 
+I’ve navigated some of the trickiest parts of web development today:
+
+Production Debugging: Finding out why a live site crashes when a local one doesn't.
+
+Database Scaling: Adjusting schemas (like that 255-character password limit) for real-world security.
+
+DevOps Creativity: Bypassing server sleep modes and rate limits to keep a free service "always-on."
+
+Your Diocese Management System is now officially a professional-grade web application. Whether you’re showing this off at UNF or adding it to your portfolio, you've got a rock-solid project to be proud of.
