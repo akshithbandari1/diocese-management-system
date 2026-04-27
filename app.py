@@ -15,7 +15,7 @@ app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, engine_options={"pool_pre_ping": True, "pool_recycle": 300})
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
