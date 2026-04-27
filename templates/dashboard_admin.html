@@ -35,6 +35,41 @@
     </div>
 </div>
 
+<div class="card shadow-sm mb-5 border-warning">
+    <div class="card-header bg-warning text-dark py-3">
+        <h6 class="mb-0 fw-bold">Pending Account Requests</h6>
+    </div>
+    <div class="card-body p-0">
+        <table class="table align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">USERNAME</th>
+                    <th>EMAIL</th>
+                    <th>REQUESTED ROLE</th>
+                    <th class="text-end pe-4">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in pending %}
+                <tr>
+                    <td class="ps-4"><strong>{{ user.username }}</strong></td>
+                    <td>{{ user.email }}</td>
+                    <td><span class="badge bg-secondary">{{ user.role }}</span></td>
+                    <td class="text-end pe-4">
+                        <a href="{{ url_for('approve_user', user_id=user.id) }}" class="btn btn-sm btn-success me-2">Approve</a>
+                        <a href="{{ url_for('deny_user', user_id=user.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deny this request?')">Deny</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">No pending requests found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-white py-3">
         <h6 class="mb-0 fw-bold">Recent Activity</h6>
@@ -52,7 +87,7 @@
             <tbody>
                 {% for log in logs %}
                 <tr>
-                    <td class="ps-4"><span class="badge rounded-pill bg-light text-primary px-3">Login</span></td>
+                    <td class="ps-4"><span class="badge rounded-pill bg-light text-primary px-3">Log</span></td>
                     <td><strong>{{ log.username }}</strong></td>
                     <td class="text-muted">{{ log.action }}</td>
                     <td class="text-end pe-4 small">{{ log.timestamp.strftime('%m/%d/%Y, %I:%M:%S %p') }}</td>
