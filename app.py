@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, request, flash, send_from_directory
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -15,7 +15,7 @@ app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-# Added connection pooling to prevent the SSL 500 Error
+# engine_options fixed to prevent SSL 500 errors on Render
 db = SQLAlchemy(app, engine_options={"pool_pre_ping": True, "pool_recycle": 300})
 
 login_manager = LoginManager(app)
@@ -186,6 +186,16 @@ def documents():
     
     docs = Document.query.all()
     return render_template('documents.html', docs=docs)
+
+@app.route('/delete_doc/<int:id>')
+@login_required
+def delete_doc(id):
+    doc = Document.query.get(id)
+    if doc and current_user.role == 'admin':
+        db.session.delete(doc)
+        db.session.commit()
+        log_event(f"Deleted Document ID {id}")
+    return redirect(url_for('documents'))
 
 @app.route('/logout')
 @login_required
