@@ -70,6 +70,68 @@
     </div>
 </div>
 
+<div class="card shadow-sm mb-5">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold">Manage Users</h6>
+        <form method="get" action="{{ url_for('dashboard') }}" class="d-flex" style="max-width: 280px;">
+            <input type="text" name="search" class="form-control form-control-sm" placeholder="Search by username or email" value="{{ request.args.get('search', '') }}">
+            <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">Search</button>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <table class="table align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">USERNAME</th>
+                    <th>EMAIL</th>
+                    <th>ROLE</th>
+                    <th>STATUS</th>
+                    <th class="text-end pe-4">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td class="ps-4"><strong>{{ user.username }}</strong></td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.role == 'admin' %}
+                            <span class="badge bg-primary">Admin</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Basic</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.status == 'active' %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                        {% if user.username != 'admin' %}
+                            {% if user.role == 'basic' %}
+                                <a href="{{ url_for('admin_action', action='promote', user_id=user.id) }}" class="btn btn-sm btn-outline-success me-1" onclick="return confirm('Make {{ user.username }} an Admin?')">Make Admin</a>
+                            {% else %}
+                                <a href="{{ url_for('admin_action', action='demote', user_id=user.id) }}" class="btn btn-sm btn-outline-warning me-1" onclick="return confirm('Demote {{ user.username }} to Basic User?')">Make Basic</a>
+                            {% endif %}
+                            <a href="{{ url_for('admin_action', action='delete', user_id=user.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete user {{ user.username }} permanently?')">Delete</a>
+                        {% else %}
+                            <span class="text-muted small">Primary Admin</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-white py-3">
         <h6 class="mb-0 fw-bold">Recent Activity</h6>
