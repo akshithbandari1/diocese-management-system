@@ -44,7 +44,13 @@
             <hr class="opacity-25">
             <div class="d-flex justify-content-between small">
                 <span>Member Since:</span>
-                <span class="text-warning">April 2024</span>
+                <span class="text-warning">
+                    {% if current_user.date_created %}
+                        {{ current_user.date_created.strftime('%B %Y') }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </span>
             </div>
         </div>
     </div>
