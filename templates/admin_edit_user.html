@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+        <h2 class="fw-bold">Edit User</h2>
+        <p class="text-muted mb-0">Update account details or reset the password for this user.</p>
+    </div>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">← Back to Dashboard</a>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body p-5">
+                <form method="POST">
+                    <div class="row mb-4">
+                        <div class="col">
+                            <label class="form-label small text-muted fw-bold">USERNAME</label>
+                            <input type="text" name="username" class="form-control border-0 bg-light" value="{{ target_user.username }}" {% if target_user.username == 'admin' %}readonly{% endif %} required>
+                            {% if target_user.username == 'admin' %}
+                                <small class="text-muted">Primary admin username cannot be changed.</small>
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <label class="form-label small text-muted fw-bold">CURRENT ROLE</label>
+                            <input type="text" class="form-control bg-light border-0" value="{{ target_user.role|upper }}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small text-muted fw-bold">EMAIL ADDRESS</label>
+                        <input type="email" name="email" class="form-control border-0 bg-light" value="{{ target_user.email }}" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small text-muted fw-bold">RESET PASSWORD (OPTIONAL)</label>
+                        <input type="password" name="password" class="form-control border-0 bg-light" placeholder="Leave blank to keep current password">
+                        <small class="text-muted">Type a new password here to reset it for this user.</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark px-5" style="background-color: #32261d;">Save Changes</button>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-link text-muted">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="card bg-dark text-white p-4 h-100 shadow-sm" style="background-color: #32261d !important;">
+            <h5 class="fw-bold text-warning mb-3">Admin Notice</h5>
+            <p class="small opacity-75">As an administrator, you can update any user's username, email, and password. All changes are recorded in the system activity log.</p>
+            <hr class="opacity-25">
+            <div class="d-flex justify-content-between small mb-2">
+                <span>User ID:</span>
+                <span class="text-warning">#{{ target_user.id }}</span>
+            </div>
+            <div class="d-flex justify-content-between small mb-2">
+                <span>Status:</span>
+                <span class="text-warning">{{ target_user.status|title }}</span>
+            </div>
+            <div class="d-flex justify-content-between small">
+                <span>Role:</span>
+                <span class="text-warning">{{ target_user.role|title }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
