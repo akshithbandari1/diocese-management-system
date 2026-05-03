@@ -179,6 +179,14 @@ def admin_action(action, user_id):
         target_user.role = 'admin'
         flash(f"User {target_user.username} is now an Admin.")
         log_event(f"Promoted user to Admin: {target_user.username}")
+
+    elif action == 'demote':
+        if target_user.username == 'admin':
+            flash("Cannot demote the primary system administrator.")
+        else:
+            target_user.role = 'basic'
+            flash(f"User {target_user.username} is now a Basic User.")
+            log_event(f"Demoted user to Basic: {target_user.username}")
         
     elif action == 'delete':
         if target_user.username == 'admin':
@@ -191,6 +199,51 @@ def admin_action(action, user_id):
     
     db.session.commit()
     return redirect(url_for('dashboard'))
+
+@app.route('/admin_edit_user/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def admin_edit_user(user_id):
+    if current_user.role != 'admin':
+        flash("Unauthorized access.")
+        return redirect(url_for('dashboard'))
+
+    target_user = User.query.get_or_404(user_id)
+
+    if request.method == 'POST':
+        new_username = request.form.get('username', '').strip()
+        new_email = request.form.get('email', '').strip()
+        new_password = request.form.get('password', '').strip()
+
+        # Protect the primary admin's username so the system bootstrap still works
+        if target_user.username == 'admin' and new_username and new_username != 'admin':
+            flash("Cannot change the username of the primary system administrator.")
+            return redirect(url_for('admin_edit_user', user_id=user_id))
+
+        # Check username uniqueness if changed
+        if new_username and new_username != target_user.username:
+            if User.query.filter_by(username=new_username).first():
+                flash("That username is already taken.")
+                return redirect(url_for('admin_edit_user', user_id=user_id))
+            target_user.username = new_username
+
+        # Check email uniqueness if changed
+        if new_email and new_email != target_user.email:
+            if User.query.filter_by(email=new_email).first():
+                flash("That email is already in use.")
+                return redirect(url_for('admin_edit_user', user_id=user_id))
+            target_user.email = new_email
+
+        # Reset password if a new one was provided
+        if new_password:
+            target_user.password = generate_password_hash(new_password)
+            log_event(f"Reset password for user: {target_user.username}")
+
+        db.session.commit()
+        log_event(f"Edited user: {target_user.username}")
+        flash(f"User {target_user.username} updated successfully.")
+        return redirect(url_for('dashboard'))
+
+    return render_template('admin_edit_user.html', target_user=target_user)
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
