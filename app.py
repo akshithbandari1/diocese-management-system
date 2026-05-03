@@ -30,6 +30,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), default='basic')  # 'admin' or 'basic'
     status = db.Column(db.String(20), default='active') # 'active' or 'pending'
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,6 +59,30 @@ def log_event(action):
 # --- Auto-Initialize Database ---
 with app.app_context():
     db.create_all()
+
+    # --- Migration: add date_created column to existing user table if missing ---
+    # This handles cloud DBs (PostgreSQL on Render) that already have a User table
+    # from before this column existed. Safe to run on every startup.
+    from sqlalchemy import text, inspect
+    try:
+        inspector = inspect(db.engine)
+        existing_columns = [col['name'] for col in inspector.get_columns('user')]
+        if 'date_created' not in existing_columns:
+            dialect = db.engine.dialect.name
+            with db.engine.begin() as conn:
+                if dialect == 'postgresql':
+                    conn.execute(text('ALTER TABLE "user" ADD COLUMN date_created TIMESTAMP'))
+                else:
+                    conn.execute(text('ALTER TABLE user ADD COLUMN date_created DATETIME'))
+            # Backfill existing rows with the current timestamp so they aren't NULL
+            User.query.filter(User.date_created.is_(None)).update(
+                {User.date_created: datetime.utcnow()}, synchronize_session=False
+            )
+            db.session.commit()
+    except Exception as e:
+        print(f"Migration check skipped: {e}")
+        db.session.rollback()
+
     admin_user = User.query.filter_by(username='admin').first()
     if not admin_user:
         admin_user = User(
