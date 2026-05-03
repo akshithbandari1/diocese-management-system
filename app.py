@@ -128,6 +128,39 @@ def dashboard():
     
     return render_template('dashboard_basic.html')
 
+@app.route('/approve_user/<int:user_id>')
+@login_required
+def approve_user(user_id):
+    if current_user.role != 'admin':
+        flash("Unauthorized access.")
+        return redirect(url_for('dashboard'))
+
+    target_user = User.query.get_or_404(user_id)
+    target_user.status = 'active'
+    db.session.commit()
+    log_event(f"Approved user: {target_user.username}")
+    flash(f"User {target_user.username} approved.")
+    return redirect(url_for('dashboard'))
+
+@app.route('/deny_user/<int:user_id>')
+@login_required
+def deny_user(user_id):
+    if current_user.role != 'admin':
+        flash("Unauthorized access.")
+        return redirect(url_for('dashboard'))
+
+    target_user = User.query.get_or_404(user_id)
+    if target_user.username == 'admin':
+        flash("Cannot deny the primary system administrator.")
+        return redirect(url_for('dashboard'))
+
+    username = target_user.username
+    db.session.delete(target_user)
+    db.session.commit()
+    log_event(f"Denied registration request: {username}")
+    flash(f"Registration request for {username} denied.")
+    return redirect(url_for('dashboard'))
+
 @app.route('/admin_action/<action>/<int:user_id>')
 @login_required
 def admin_action(action, user_id):
